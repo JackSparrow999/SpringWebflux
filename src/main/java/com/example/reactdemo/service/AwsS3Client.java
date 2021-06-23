@@ -81,9 +81,13 @@ public class AwsS3Client {
            } else {
                return false;
            }
-       }).map(AwsS3Client::concatBuffers).flatMap((buffer)->{
+       }).map(AwsS3Client::concatBuffers)
+        .parallel(50)
+        .runOn(Schedulers.boundedElastic())
+        .flatMap((buffer)->{
             return addObjectToS3(buffer,filekey);
-        });
+        })
+        .sequential();
 
     }
 
