@@ -89,15 +89,26 @@ public class AwsS3Client {
 
     private Mono<String> addObjectToS3(ByteBuffer buffer,String filekey) {
 
-        CompletableFuture future = s3client
+//         CompletableFuture future = s3client
+//                 .putObject(PutObjectRequest.builder()
+//                                 .bucket(bucketName)
+//                                 .contentLength((long)buffer.capacity())
+//                                 .key(filekey)
+//                                 .build(),
+//                         AsyncRequestBody.fromByteBuffer(buffer));
+        
+        return Mono.fromFuture(
+            s3client
                 .putObject(PutObjectRequest.builder()
                                 .bucket(bucketName)
                                 .contentLength((long)buffer.capacity())
                                 .key(filekey)
                                 .build(),
-                        AsyncRequestBody.fromByteBuffer(buffer));
+                        AsyncRequestBody.fromByteBuffer(buffer))
+        )
+        .map(x -> "Uploaded");
 
-        return Mono.just("Uploaded");
+//         return Mono.just("Uploaded");
 
     }
 
